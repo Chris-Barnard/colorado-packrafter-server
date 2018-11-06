@@ -166,6 +166,23 @@ def add_target(data):
 
     return True
 
+def log_email_sent(item):
+    conn_string = credentials.database['conn_string']
+
+    engine = create_engine(conn_string)
+
+    print('Logging sent email')
+    print(item)
+
+    sql = """
+    insert into `coloradopackrafter`.`flowbot_emails_sent` (`url`,`type`,`target`,`email`,`cur_flow`,`guage_name`,`request_id`) values ('{}','{}','{}','{}','{}','{}','{}')
+    """.format(item.url, item.type.upper(), item.target, item.email, item.cur_flow, item.guage_name, item.id)
+
+    engine.execute(sql)
+
+    return True
+
+
 # # Craft an email message
 
 # In[211]:
@@ -213,7 +230,7 @@ def run_flowbot():
     password = credentials.email['password']
     for item in email_list.itertuples():
         try: 
-            # with smtplib.SMTP('smtp.gmail.com', 587) as s:
+            log_email_sent(item)
             s = smtplib.SMTP(credentials.email['server'], 587)
             s.ehlo()
             s.starttls()
