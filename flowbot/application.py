@@ -12,11 +12,15 @@ CORS(app)
 
 @app.route('/add-tracker/', methods=['POST'])
 def add_tracker():
-    print(request.json)
-    data = request.json#['data']
+    data = request.json
 
-    print(data)
-    add_target(data)
+    try:
+        if len(data['email']) > 5:
+            add_target(data)
+        else:
+            raise Exception('Invalid submission', data['email'])
+    except Exception as e:
+        raise e
     return json.dumps(data)
 
 # @app.route('/')
