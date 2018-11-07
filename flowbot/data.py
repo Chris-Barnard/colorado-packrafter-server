@@ -129,7 +129,7 @@ def process_targets():
     new_target_list = (
         results
         .query('evaluation == False')
-        .loc[:, ['email','url','type','value']]
+        #.loc[:, ['email','url','type','value']]
     )
 
     new_target_list.to_pickle('/home/ec2-user/luigi/flowbot/runtime-data/targets.pkl')
@@ -218,6 +218,17 @@ def make_email(item):
     
     return outer.as_string()
 
+def send_email(item):
+    username = credentials.email['username']
+    password = credentials.email['password']
+    s = smtplib.SMTP(credentials.email['server'], 587)
+    s.ehlo()
+    s.starttls()
+    s.login(username, password)
+    s.sendmail('flowbot@coloradopackrafter.com', item.email, make_email(item))
+    s.quit()
+    print('Email Sent!')
+
 def run_flowbot():
 
     print('Entering Main Function ---------------------------------')
@@ -226,18 +237,10 @@ def run_flowbot():
     print('Targets Remaining: ', len(targets))
 
 
-    username = credentials.email['username']
-    password = credentials.email['password']
     for item in email_list.itertuples():
         try: 
             log_email_sent(item)
-            s = smtplib.SMTP(credentials.email['server'], 587)
-            s.ehlo()
-            s.starttls()
-            s.login(username, password)
-            s.sendmail('flowbot@coloradopackrafter.com', item.email, make_email(item))
-            s.quit()
-            print('Email Sent!')
+            send_email(item)
             remove_target(item.id)
         except:
             print('Unable to send', sys.exc_info()[0])
