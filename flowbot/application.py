@@ -23,9 +23,5 @@ def add_tracker():
         raise e
     return json.dumps(data)
 
-# @app.route('/')
-# def home():
-#     return load_flow_targets().to_json(orient='records')
-
 if __name__ == '__main__':
 	app.run(debug=False, threaded=True, host='0.0.0.0')
