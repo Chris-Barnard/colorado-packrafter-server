@@ -124,7 +124,7 @@ def process_targets():
         .query('evaluation == True')
     )
 
-    email_list.to_pickle('/home/ec2-user/luigi/flowbot/runtime-data/email_list.pkl')
+    email_list.to_csv('/home/ec2-user/luigi/flowbot/runtime-data/email_list.csv')
 
     new_target_list = (
         results
@@ -132,7 +132,7 @@ def process_targets():
         #.loc[:, ['email','url','type','value']]
     )
 
-    new_target_list.to_pickle('/home/ec2-user/luigi/flowbot/runtime-data/targets.pkl')
+    new_target_list.to_csv('/home/ec2-user/luigi/flowbot/runtime-data/targets.csv')
     
     return email_list, new_target_list
 
