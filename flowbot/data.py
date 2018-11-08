@@ -8,6 +8,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 import requests
 
+from sqlalchemy.types import NVARCHAR, INT, DECIMAL, DATETIME
 import credentials
 
 # # Define functions that drive program flow
@@ -124,7 +125,7 @@ def process_targets():
         .query('evaluation == True')
     )
 
-    email_list.to_csv('/home/ec2-user/luigi/flowbot/runtime-data/email_list.csv')
+    email_list.to_pickle('/home/ec2-user/luigi/flowbot/runtime-data/email_list.pkl')
 
     new_target_list = (
         results
@@ -132,7 +133,7 @@ def process_targets():
         #.loc[:, ['email','url','type','value']]
     )
 
-    new_target_list.to_csv('/home/ec2-user/luigi/flowbot/runtime-data/targets.csv')
+    new_target_list.to_pickle('/home/ec2-user/luigi/flowbot/runtime-data/targets.pkl')
     
     return email_list, new_target_list
 
@@ -168,7 +169,6 @@ def add_target(data):
 
 def log_email_sent(item):
     conn_string = credentials.database['conn_string']
-
     engine = create_engine(conn_string)
 
     print('Logging sent email')
@@ -217,6 +217,27 @@ def make_email(item):
     outer.attach(MIMEText(htmlText, 'html'))
     
     return outer.as_string()
+
+def save_results():
+    conn_string = credentials.database['conn_string']
+    engine = create_engine(conn_string)
+    engine.execute('drop table `coloradopackrafter`.`flowbot_latest_results`')
+    data = pd.read_pickle('/home/ec2-user/luigi/flowbot/runtime-data/targets.pkl')
+    types = {
+        'url' : NVARCHAR(length=255),
+        'type' : NVARCHAR(length=255),
+        'email' : NVARCHAR(length=255),
+        'target' : DECIMAL(10,5),
+        'cur_flow' : DECIMAL(10,5),
+        'guage_name' : NVARCHAR(length=255),
+        'id' : INT(),
+        'evaluation' : INT(),
+    }
+    print(data.head(25))
+    data.to_sql('flowbot_latest_results', engine, if_exists='replace', dtype=types, index=False)
+
+    print('Results saved to DB\n\n')
+    return True
 
 def send_email(item):
     username = credentials.email['username']

@@ -3,6 +3,7 @@ import luigi
 import pandas as pd
 from sqlalchemy import create_engine
 from data import run_flowbot
+from data import save_results
 
 class TestConnection(luigi.Task):
     def requires(self):
@@ -42,6 +43,18 @@ class Flowbot(luigi.Task):
         except Exception as e:    
             raise e
         return res
+
+class LogFlowbotResults(luigi.Task):
+    def requires(self):
+        return [Flowbot()]
+    def output(self):
+        return luigi.LocalTarget('/home/ec2-user/luigi/flowbot/runtime-data/LogFlowbotResults{}.txt'.format(get_date_string()))
+    def run(self):
+        res = save_results()
+        with self.output().open('w') as out_file:
+            print(res, file=out_file)
+        return res
+
 ####  helper functions ###
 
 def get_date_string():
