@@ -159,8 +159,8 @@ def add_target(data):
     engine = create_engine(conn_string)
 
     sql = """
-    insert into `coloradopackrafter`.`flowbot_requests` (`url`,`type`,`target`,`email`) values ('{}', '{}', '{}', '{}')
-    """.format(data['url'], data['type'].upper(), data['target'], data['email'])
+    insert into `coloradopackrafter`.`flowbot_requests` (`url`,`type`,`target`,`email`,`date_added`) values ('{}', '{}', '{}', '{}','{}')
+    """.format(data['url'], data['type'].upper(), data['target'], data['email'], pd.Timestamp('now', tz='utc'))
 
     engine.execute(sql)
 
@@ -175,8 +175,8 @@ def log_email_sent(item):
     print(item)
 
     sql = """
-    insert into `coloradopackrafter`.`flowbot_emails_sent` (`url`,`type`,`target`,`email`,`cur_flow`,`guage_name`,`request_id`) values ('{}','{}','{}','{}','{}','{}','{}')
-    """.format(item.url, item.type.upper(), item.target, item.email, item.cur_flow, item.guage_name, item.id)
+    insert into `coloradopackrafter`.`flowbot_emails_sent` (`url`,`type`,`target`,`email`,`cur_flow`,`guage_name`,`request_id`,`date_sent`) values ('{}','{}','{}','{}','{}','{}','{}','{}')
+    """.format(item.url, item.type.upper(), item.target, item.email, item.cur_flow, item.guage_name, item.id, pd.Timestamp('now', tz='utc'))
 
     engine.execute(sql)
 
