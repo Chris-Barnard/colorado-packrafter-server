@@ -14,6 +14,8 @@ CORS(app)
 def add_tracker():
     data = request.json
 
+    data['target'] = data['target'].replace(',', '')
+
     try:
         if len(data['email']) > 5:
             add_target(data)
