@@ -4,6 +4,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from data import run_flowbot
 from data import save_results
+from cleanup import cleanup
 
 class TestConnection(luigi.Task):
     def requires(self):
@@ -54,6 +55,17 @@ class LogFlowbotResults(luigi.Task):
         with self.output().open('w') as out_file:
             print(res, file=out_file)
         return res
+
+class CleanupLogs(luigi.Task):
+    def requires(self):
+        return [LogFlowbotResults()]
+    def output(self):
+        return luigi.LocalTarget('/home/ec2-user/luigi/flowbot/runtime-data/CleanupLogs{}.txt'.format(get_date_string()))
+    def run(self):
+        with self.output().open('w') as out_file:
+            print('Cleaning up logs', file=out_file)
+
+        return cleanup()         
 
 ####  helper functions ###
 
