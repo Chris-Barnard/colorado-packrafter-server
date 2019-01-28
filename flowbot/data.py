@@ -29,10 +29,10 @@ def grab_flow(url):
         r = requests.get(url, headers=header, timeout=13.05)
         dfs = pd.read_html(r.text.encode('utf-8'))
 
-        flowchart = dfs[4]
+        flowchart = dfs[0]
 
-        flow_string = unicode(flowchart.iloc[2,4].split(' ')[0], 'utf-8')
-        guage_name = flowchart.iloc[1,0]
+        flow_string = unicode(flowchart.iloc[4,1].split(' ')[0], 'utf-8')
+        guage_name = flowchart.iloc[2,1]
 
         if(flow_string.isnumeric() == False):
             #print(flow_string)
@@ -48,6 +48,7 @@ def grab_flow(url):
         return dict(flow=0, guage='none')
 
     return dict(flow=flow, guage=guage_name)
+
 
 
 # ### Load in the targets file
