@@ -31,19 +31,20 @@ def grab_flow(url):
 
         flowchart = dfs[0]
 
-        flow_string = unicode(flowchart.iloc[4,1].split(' ')[0], 'utf-8')
+        # flow_string = unicode(flowchart.iloc[4,1].split(' ')[0], 'utf-8')
+        flow_string = flowchart.iloc[4,1].split(' ')[0]
+
         guage_name = flowchart.iloc[2,1]
 
         if(flow_string.isnumeric() == False):
-            #print(flow_string)
             if('.' in flow_string):
                 flow = float(flow_string)
             else:
                 raise Exception('Error processing flowchart - returned non numeric flow')
         else:
             flow = int(flow_string)
-    
-    except:
+
+    except Exception as e:
         print('Error reading data from {}'.format(url))
         return dict(flow=0, guage='none')
 
@@ -269,4 +270,4 @@ def run_flowbot():
             raise
 
 if __name__ == '__main__':
-    run_flowbot()
+    grab_flow('https://www.americanwhitewater.org/content/River/detail/id/402')
