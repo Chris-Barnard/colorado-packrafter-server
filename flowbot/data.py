@@ -45,6 +45,7 @@ def grab_flow(url):
             flow = int(flow_string)
 
     except Exception as e:
+        #raise e
         print('Error reading data from {}'.format(url))
         return dict(flow=0, guage='none')
 

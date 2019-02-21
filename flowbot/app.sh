@@ -1,3 +1,3 @@
 #!/bin/bash
 
-nohup python application.py >> app.log &
+nohup python3 application.py >> app.log &
