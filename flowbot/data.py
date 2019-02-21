@@ -31,10 +31,10 @@ def grab_flow(url):
 
         flowchart = dfs[0]
 
-        # flow_string = unicode(flowchart.iloc[4,1].split(' ')[0], 'utf-8')
+        # grab relevant information out of the results table 
         flow_string = flowchart.iloc[4,1].split(' ')[0]
-
         guage_name = flowchart.iloc[2,1]
+        flow_last_updated = flowchart.iloc[4,0].split(': ')[1]
 
         if(flow_string.isnumeric() == False):
             if('.' in flow_string):
@@ -47,9 +47,9 @@ def grab_flow(url):
     except Exception as e:
         #raise e
         print('Error reading data from {}'.format(url))
-        return dict(flow=0, guage='none')
+        return dict(flow=0, guage='none', flow_last_updated='n/a')
 
-    return dict(flow=flow, guage=guage_name)
+    return dict(flow=flow, guage=guage_name, flow_last_updated=flow_last_updated)
 
 
 
@@ -120,6 +120,7 @@ def process_targets():
         targets
         .assign(cur_flow=lambda x: x.url.map(cur_values).apply(lambda x: x['flow']))
         .assign(guage_name=lambda x: x.url.map(cur_values).apply(lambda x: x['guage']))
+        .assign(flow_last_updated=lambda x: x.url.map(cur_values).apply(lambda x: x['flow_last_updated']))
         .assign(evaluation=evaluate)
     )
 
@@ -233,6 +234,7 @@ def save_results():
         'target' : DECIMAL(10,5),
         'cur_flow' : DECIMAL(10,5),
         'guage_name' : NVARCHAR(length=255),
+        'flow_last_updated' : NVARCHAR(length=255),
         'id' : INT(),
         'evaluation' : INT(),
     }
