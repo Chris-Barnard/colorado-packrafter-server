@@ -201,22 +201,24 @@ def make_email(item):
     outer = MIMEMultipart()
     outer['Subject'] = 'FLOWBOT Automated Email: {0} guage has achieved a flow of {1}'.format(item.guage_name, item.cur_flow)
     outer['To'] = item.email
-    outer['From'] = 'flowbot@coloradopackrafting.com'
+    outer['From'] = 'flowbot@coloradopackrafter.com'
     htmlText = """
     <html>
         <body>
-            <h1>Time to Paddle!!!</h1>
+            <h1>Flowbot @ ColoradoPackrafter</h1>
             <h3>
                 Dear Packrafter,
             </h3>
             <p>
-                You previously set an alert for the guage: {0} {1} {2}
+                You previously set an alert {4} days ago for the guage: {0} {1} {2}
                 <br />
                 Well, the current flow has reached {3}, so now you are getting this message.  So get out there and be safe!
             </p>
+            <p>
+            </p>
         </body>
     </html>
-    """.format(item.guage_name, item.type, item.target, item.cur_flow)
+    """.format(item.guage_name, item.type.lower(), item.target, item.cur_flow, (pd.Timestamp('now') - pd.Timestamp(item.date_added)).days)
     
     outer.attach(MIMEText(htmlText, 'html'))
     
